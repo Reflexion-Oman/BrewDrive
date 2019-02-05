@@ -32,11 +32,35 @@
         </header>
         <main>
             <h1>My Brews</h1>
-            <button type="button" id="index.log-out-button">Log Out</button>
+            <button type="button" id="log-out-button">Log Out</button>
+            <button id="brews.add-brew-button">Add a Brew</button>
+            <div id="brews.add-brew-dialog-container">
+                <dialog id="brews.add-brew-dialog">
+                    <div id="add-brew-dialog.logistic-input">
+                        <input id="add-brew-dialog.brew-name-input" placeholder="Name of Beer" required><br>
+                        <input id="add-brew-dialog.brewery-name-input" placeholder="Brewery Name" required><br>
+                        <input id="add-brew-dialog.brewery-location-input" placeholder="Brewery Location" required>
+                    </div>
+                </dialog>
+            </div>
+
+            <!-- Container for General Categories -->
+            <div id="brews.my-brews-container">
+                <div id="brews.light-container">
+                    <h3>Lights</h3>
+                </div>
+                <div id="brews.medium-container">
+                    <h3>Fairs</h3>
+                </div>
+                <div id="brews.dark-container">
+                    <h3>Darks</h3>
+                </div>
+            </div>
         </main>
 
         <!-- #region Site Scripts -->
         <script src="JS/app.js"></script>
+        <script src="JS/brews.js"></script>
         <noscript>Oops! Maybe JavaScript isn't enabled!</noscript>
         <!-- #endregion -->
     </body>

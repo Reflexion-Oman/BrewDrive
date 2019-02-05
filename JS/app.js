@@ -1,13 +1,10 @@
 /* #region Firestore Elements */
 
-const firestore = firebase.firestore();
-const settings = {/* your settings... */};
-firestore.settings(settings);
 const auth = firebase.auth();
 
 /* #endregion Firestore Elements */
 
-const logoutBtn = document.getElementById('index.log-out-button');
+const logoutBtn = document.getElementById('log-out-button');
 const homeBtn = document.getElementById('nav.home');
 const myBrewsBtn = document.getElementById('nav.my-brews');
 const exploreBtn = document.getElementById('nav.explore');
@@ -21,8 +18,7 @@ auth.onAuthStateChanged(firebaseUser => {
             window.location = 'login.html';
         });
     } else {
-        window.location = 'login.html'
-        console.log('Not logged in');
+        window.location = 'login.html';
     }
 });
 
