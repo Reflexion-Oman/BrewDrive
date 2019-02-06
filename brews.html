@@ -38,17 +38,29 @@
             <!-- Add Brew Dialog -->
             <div id="brews.add-brew-dialog-container">
                 <dialog id="brews.add-brew-dialog">
+                    <div id="add-brew-dialog.header">
+                        <h3>Add to My Brew Drive</h3>
+                    </div>
                     <div id="add-brew-dialog.logistic-input">
-                        <form id="add-brew-dialog.form">
+                        <form id="add-brew-dialog.form" >
                             <input id="add-brew-dialog.brew-name-input" placeholder="Name of Beer" required><br>
                             <input id="add-brew-dialog.brewery-name-input" placeholder="Brewery Name" required><br>
                             <input id="add-brew-dialog.brewery-location-input" placeholder="Brewery Location" required><br>
-                            <input id="add-brew-dialog.brew-image" type="file" accept="image/*" onchange="dialogUploadPreview(event)"><br>
+                            <input id="add-brew-dialog.brew-style" placeholder="Beer Style"><br>
+                            <select id="add-brew-dialog.brew-color" required>
+                                <option style="display: none" value="This beer is..." selected disabled>This beer is...</option>
+                                <optgroup label="Shade of Beer">
+                                    <option id="add-brew-dialog.light-brew">Light</option>
+                                    <option id="add-brew-dialog.fair-brew">Fair</option>
+                                    <option id="add-brew-dialog.dark-brew">Dark</option>
+                                </optgroup>
+                            </select><br>
+                            <input id="add-brew-dialog.brew-image" type="file" accept="image/*" onchange="dialogUploadPreview(event)" required><br>
                             <img id="add-brew-dialog.brew-image-preview" alt="Image Preview"><br>
-                            <textarea id="add-brew-dialog.brew-description" placeholder="Describe this beer..."></textarea><br>
-                            <button id="add-brew-dialog.cancel-button" type="reset">Cancel</button>
-                            <button id="add-brew-dialog.add-button">Add</button>
+                            <textarea id="add-brew-dialog.brew-description" placeholder="Describe this beer..."></textarea><br>                                                                    
                         </form>
+                        <button id="add-brew-dialog.cancel-button" type="reset">Cancel</button>
+                        <button id="add-brew-dialog.add-button">Add</button>               
                     </div>
                 </dialog>
             </div>
@@ -64,6 +76,9 @@
                 </div>
                 <div id="brews.dark-container">
                     <h3>Darks</h3>
+                </div>
+                <div id="brews.unlabeled-container">
+                    <h3>Others</h3>
                 </div>
             </div>
         </main>
