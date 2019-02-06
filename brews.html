@@ -55,7 +55,7 @@
                                     <option id="add-brew-dialog.dark-brew">Dark</option>
                                 </optgroup>
                             </select><br>
-                            <input id="add-brew-dialog.brew-image" type="file" accept="image/*" onchange="dialogUploadPreview(event)" required><br>
+                            <input id="add-brew-dialog.brew-image" type="file" accept="image/*" onchange="storeFile(event); dialogUploadPreview(event)" required><br>
                             <img id="add-brew-dialog.brew-image-preview" alt="Image Preview"><br>
                             <textarea id="add-brew-dialog.brew-description" placeholder="Describe this beer..."></textarea><br>                                                                    
                         </form>

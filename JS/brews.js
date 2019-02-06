@@ -6,6 +6,9 @@ const addBrewForm = document.getElementById('add-brew-dialog.form');
 const addBrewCancelBtn = document.getElementById('add-brew-dialog.cancel-button');
 const addBrewAddBtn = document.getElementById('add-brew-dialog.add-button');
 
+let file;
+let newFilename;
+
 /* #region Button Protocols */
 
 addBrewBtn.addEventListener('click', e => {
@@ -24,7 +27,7 @@ addBrewAddBtn.addEventListener('click', e => {
     let style = document.getElementById('add-brew-dialog.brew-style');
     let shade = document.getElementById('add-brew-dialog.brew-color');
     let description = document.getElementById('add-brew-dialog.brew-description');
-    let image = document.getElementById('add-brew-dialog.brew-image-preview');
+    let image = file;
     addBrew(name.value, brewery.value, location.value, style.value, shade.value, image, description.value);
     resetAddBrewForm();
 });
@@ -38,6 +41,10 @@ dialogUploadPreview = event => {
     let image = event.target.files[0];
 };
 
+storeFile = event => {
+    file = event.target.files[0];
+}
+
 function resetAddBrewForm() {
     addBrewForm.reset();
     document.getElementById('add-brew-dialog.brew-image-preview').src = "#";
@@ -47,6 +54,7 @@ function resetAddBrewForm() {
 
 function addBrewInfo(name, brewery, location, style, shade, description) {
     let key = name + ' - ' + brewery + ', ' + location;
+    newFilename = key;
     let newBrewDoc = brewCollect.doc(key);
     newBrewDoc.get().then(function(doc) {
         if (!doc || !doc.exists) {
@@ -58,9 +66,8 @@ function addBrewInfo(name, brewery, location, style, shade, description) {
                 shade: shade,
                 description: description
             });
-            userDoc.set({
-                myBrewCount: ++brewCount
-            });
+            userData.myBrewCount++;
+            userDoc.update(userData);
             console.log('Added ' + key + ' to your brew drive');
         }
         else {
@@ -74,6 +81,9 @@ function addBrew(name, brewery, location, style, shade, image, description) {
     // Add text info doc to Brew Info collection
     addBrewInfo(name, brewery, location, style, shade, description);
 
-    //var imageRef = storageRef.child(user+ '/test.jpg');
-    
+    var imageRef = storageRef.child(user.email + '/' + newFilename + '.png');
+    var file = image;
+    imageRef.put(file).then(function(snapshot) {
+        console.log('Uploaded the file');
+    });
 }
