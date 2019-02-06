@@ -37,16 +37,7 @@ auth.onAuthStateChanged(firebaseUser => {
 // References for db
 let userCollect = firestore.collection('Users');
 let userDoc;
-
-function addUser() {
-    userDoc.set({
-        user: {
-            email: userEmail,
-            uid: user.uid
-        },
-        myBrewCount: 0
-    });
-}
+let brewCollect;
 
 function isUser(email) {
     userDoc = userCollect.doc('user-' + userEmail);
@@ -55,11 +46,27 @@ function isUser(email) {
         if (doc && doc.exists) {
             userData = doc.data();
             brewCount = userData.myBrewCount;
+            brewCollect = userDoc.collection('My Brews');            
         } 
+        // doesn't exist
         else {
             addUser();
         }
     });
+}
+
+function addUser() {
+    // create new user document
+    userDoc.set({
+        user: {
+            email: userEmail,
+            uid: user.uid
+        },
+        myBrewCount: 0
+    });
+
+    // create new user's 'my brews' collection
+    brewCollect = userDoc.collection('My Brews');
 }
 
 /* #region Nav Functionality */

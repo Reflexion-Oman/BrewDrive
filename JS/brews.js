@@ -1,3 +1,4 @@
+var storageRef = firebase.storage().ref();
 
 const addBrewBtn = document.getElementById('brews.add-brew-button');
 const addBrewDialog = document.getElementById('brews.add-brew-dialog');
@@ -13,10 +14,19 @@ addBrewBtn.addEventListener('click', e => {
 });
 
 addBrewCancelBtn.addEventListener('click', e => {
-    addBrewForm.reset();
-    document.getElementById('add-brew-dialog.brew-image-preview').src = "#";
-    addBrewDialog.removeAttribute('open');
-    addBrewBtn.removeAttribute('disabled');
+    resetAddBrewForm();
+});
+
+addBrewAddBtn.addEventListener('click', e => {
+    let name = document.getElementById('add-brew-dialog.brew-name-input');
+    let brewery = document.getElementById('add-brew-dialog.brewery-name-input');
+    let location = document.getElementById('add-brew-dialog.brewery-location-input');
+    let style = document.getElementById('add-brew-dialog.brew-style');
+    let shade = document.getElementById('add-brew-dialog.brew-color');
+    let description = document.getElementById('add-brew-dialog.brew-description');
+    let image = document.getElementById('add-brew-dialog.brew-image-preview');
+    addBrew(name.value, brewery.value, location.value, style.value, shade.value, image, description.value);
+    resetAddBrewForm();
 });
 
 /* #endregion Button Protocols */
@@ -27,3 +37,43 @@ dialogUploadPreview = event => {
     preview.src = URL.createObjectURL(event.target.files[0]);
     let image = event.target.files[0];
 };
+
+function resetAddBrewForm() {
+    addBrewForm.reset();
+    document.getElementById('add-brew-dialog.brew-image-preview').src = "#";
+    addBrewDialog.removeAttribute('open');
+    addBrewBtn.removeAttribute('disabled');
+}
+
+function addBrewInfo(name, brewery, location, style, shade, description) {
+    let key = name + ' - ' + brewery + ', ' + location;
+    let newBrewDoc = brewCollect.doc(key);
+    newBrewDoc.get().then(function(doc) {
+        if (!doc || !doc.exists) {
+            newBrewDoc.set({
+                name: name,
+                brewery: brewery,
+                location: location,
+                style: style,
+                shade: shade,
+                description: description
+            });
+            userDoc.set({
+                myBrewCount: ++brewCount
+            });
+            console.log('Added ' + key + ' to your brew drive');
+        }
+        else {
+            console.log(name.value + ' already exists in your brew drive');
+        }
+    });
+}
+
+function addBrew(name, brewery, location, style, shade, image, description) {
+
+    // Add text info doc to Brew Info collection
+    addBrewInfo(name, brewery, location, style, shade, description);
+
+    //var imageRef = storageRef.child(user+ '/test.jpg');
+    
+}
