@@ -34,6 +34,8 @@ addBrewAddBtn.addEventListener('click', e => {
 
 /* #endregion Button Protocols */
 
+/* #region Form Related Functions */
+
 // Renders image in add brew dialog
 dialogUploadPreview = event => {
     let preview = document.getElementById('add-brew-dialog.brew-image-preview');
@@ -41,6 +43,7 @@ dialogUploadPreview = event => {
     let image = event.target.files[0];
 };
 
+// Retrieve from HTML input
 storeFile = event => {
     file = event.target.files[0];
 }
@@ -71,7 +74,7 @@ function addBrewInfo(name, brewery, location, style, shade, description) {
             console.log('Added ' + key + ' to your brew drive');
         }
         else {
-            console.log(name.value + ' already exists in your brew drive');
+            console.log(name + ' already exists in your brew drive');
         }
     });
 }
@@ -81,9 +84,45 @@ function addBrew(name, brewery, location, style, shade, image, description) {
     // Add text info doc to Brew Info collection
     addBrewInfo(name, brewery, location, style, shade, description);
 
-    var imageRef = storageRef.child(user.email + '/' + newFilename + '.png');
-    var file = image;
-    imageRef.put(file).then(function(snapshot) {
-        console.log('Uploaded the file');
+    // Store image in db
+    storeImage(image)
+
+    // Render in color category container
+    renderBrewImage(shade, image);
+}
+
+function storeImage(image) {
+    let newBrewDoc = brewCollect.doc(newFilename);
+    newBrewDoc.get().then(function(doc) {
+        if (doc || doc.exists) {
+            console.log(newFilename + ' already exists in storage');
+        }
+        else {
+            var filename = user.email + '/' + newFilename + '.png';
+            var imageRef = storageRef.child(filename);
+            var file = image;
+            imageRef.put(file).then(function(snapshot) {
+                console.log(newFilename + ' added to db storage');
+            });
+        }
     });
 }
+
+function renderBrewImage(shade, image) {
+    switch (shade) {
+        case 'Light': shade = 'light';
+        case 'Fair': shade = 'fair';
+        case 'Dark': shade = 'dark';
+    }
+
+    let container = document.getElementById('brews.' + shade + '-container');
+    let imgHTML = document.createElement('img');
+    let src = URL.createObjectURL(image);
+    imgHTML.setAttribute('src', src);
+    imgHTML.setAttribute('style', 'max-height: 150px; max-width: 100px');
+    container.appendChild(imgHTML);
+}
+
+
+
+/* #endregion Form Related Functions */
