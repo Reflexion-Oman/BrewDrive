@@ -55,7 +55,7 @@ function resetAddBrewForm() {
     addBrewBtn.removeAttribute('disabled');
 }
 
-function addBrewInfo(name, brewery, location, style, shade, description) {
+function addBrewInfo(name, brewery, location, style, shade, description, image) {
     let key = name + ' - ' + brewery + ', ' + location;
     newFilename = key;
     let newBrewDoc = brewCollect.doc(key);
@@ -71,24 +71,22 @@ function addBrewInfo(name, brewery, location, style, shade, description) {
             });
             userData.myBrewCount++;
             userDoc.update(userData);
+            storeImage(image);
             console.log('Added ' + key + ' to your brew drive');
-            return 0;
+        }
+        else {
+            console.log(name + ' already exists in your brew drive');
         }
     });
-    console.log(name + ' already exists in your brew drive');
-    return 1;
 }
 
 function addBrew(name, brewery, location, style, shade, image, description) {
 
     // Add text info doc to Brew Info collection
-    let exists = addBrewInfo(name, brewery, location, style, shade, description);
-    if (!exists) {
-        storeImage(image);
-        
-        // Render in color category container
-        enderBrewImage(shade, image);
-    }
+    addBrewInfo(name, brewery, location, style, shade, description, image);
+                
+    // Render in color category container
+    renderBrewImage(shade, image);
 }
 
 function storeImage(image) {
