@@ -72,39 +72,31 @@ function addBrewInfo(name, brewery, location, style, shade, description) {
             userData.myBrewCount++;
             userDoc.update(userData);
             console.log('Added ' + key + ' to your brew drive');
-        }
-        else {
-            console.log(name + ' already exists in your brew drive');
+            return 0;
         }
     });
+    console.log(name + ' already exists in your brew drive');
+    return 1;
 }
 
 function addBrew(name, brewery, location, style, shade, image, description) {
 
     // Add text info doc to Brew Info collection
-    addBrewInfo(name, brewery, location, style, shade, description);
-
-    // Store image in db
-    storeImage(image)
-
-    // Render in color category container
-    renderBrewImage(shade, image);
+    let exists = addBrewInfo(name, brewery, location, style, shade, description);
+    if (!exists) {
+        storeImage(image);
+        
+        // Render in color category container
+        enderBrewImage(shade, image);
+    }
 }
 
 function storeImage(image) {
-    let newBrewDoc = brewCollect.doc(newFilename);
-    newBrewDoc.get().then(function(doc) {
-        if (doc || doc.exists) {
-            console.log(newFilename + ' already exists in storage');
-        }
-        else {
-            var filename = user.email + '/' + newFilename + '.png';
-            var imageRef = storageRef.child(filename);
-            var file = image;
-            imageRef.put(file).then(function(snapshot) {
-                console.log(newFilename + ' added to db storage');
-            });
-        }
+    var filename = user.email + '/' + newFilename + '.png';
+    var imageRef = storageRef.child(filename);
+    var file = image;
+    imageRef.put(file).then(function(snapshot) {
+        console.log(newFilename + ' added to db storage');
     });
 }
 
