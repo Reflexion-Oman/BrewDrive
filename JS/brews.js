@@ -9,6 +9,24 @@ const addBrewAddBtn = document.getElementById('add-brew-dialog.add-button');
 let file;
 let newFilename;
 
+// Authorization State Handler
+auth.onAuthStateChanged(firebaseUser => {
+    if (firebaseUser) {
+
+        // store for db use
+        user = firebaseUser;
+        userEmail = firebaseUser.email;
+        userCollect = firestore.collection('Users');
+        userDoc = userCollect.doc('user-' + userEmail);
+        brewCollect = userDoc.collection('My Brews');
+        isUser(userEmail);
+        renderDBImages();
+    } else {
+        window.location = 'login.html';
+    }
+});
+
+
 /* #region Button Protocols */
 
 addBrewBtn.addEventListener('click', e => {
@@ -86,7 +104,8 @@ function addBrew(name, brewery, location, style, shade, image, description) {
     addBrewInfo(name, brewery, location, style, shade, description, image);
                 
     // Render in color category container
-    renderBrewImage(shade, image);
+    let caption = name + ' - ' + brewery;
+    renderBrewImage(shade, image, caption);
 }
 
 function storeImage(image) {
@@ -98,21 +117,78 @@ function storeImage(image) {
     });
 }
 
-function renderBrewImage(shade, image) {
-    switch (shade) {
-        case 'Light': shade = 'light';
-        case 'Fair': shade = 'fair';
-        case 'Dark': shade = 'dark';
+function shadeSwitch(shade) {
+    if (shade == "Light") {
+        return 'light';
     }
+    else if (shade == "Fair") {
+        return 'fair';
+    }
+    else if (shade == "Heavy") {
+        return 'heavy'
+    }
+    return 'unlabeled';
+}
 
+function renderBrewImage(shade, image, caption) {
+    shade = shadeSwitch(shade); // call to format shade string
+
+    // element references
     let container = document.getElementById('brews.' + shade + '-container');
     let imgHTML = document.createElement('img');
+    let figureHTML = document.createElement('figure');
+    let figcaptionHTML = document.createElement('figcaption');
+
+    // set attributes of image structure
     let src = URL.createObjectURL(image);
     imgHTML.setAttribute('src', src);
     imgHTML.setAttribute('style', 'max-height: 150px; max-width: 100px');
-    container.appendChild(imgHTML);
+    figureHTML.setAttribute('id', 'brews.' + shade + '-' + caption);
+    figcaptionHTML.innerText = caption;
+
+    // construct the element sub-dom
+    figureHTML.appendChild(imgHTML);
+    figureHTML.appendChild(figcaptionHTML);
+    container.appendChild(figureHTML);
 }
 
+function renderFromStorage(shade, image, caption) {
 
+
+
+    shade = shadeSwitch(shade); // call to format shade string
+
+    // element references
+    let container = document.getElementById('brews.' + shade + '-container');
+    let imgHTML = document.createElement('img');
+    let figureHTML = document.createElement('figure');
+    let figcaptionHTML = document.createElement('figcaption');
+
+    // set attributes of image structure
+    imgHTML.setAttribute('src', image);
+    imgHTML.setAttribute('style', 'max-height: 150px; max-width: 100px');
+    figureHTML.setAttribute('id', 'brews.' + shade + '-' + caption);
+    figcaptionHTML.innerText = caption;
+
+    // construct the element sub-dom
+    figureHTML.appendChild(imgHTML);
+    figureHTML.appendChild(figcaptionHTML);
+    container.appendChild(figureHTML);
+}
+
+function renderDBImages() {
+    var imagesRef = storageRef.child(userEmail);
+    brewCollect.get().then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc) {
+            let brewData = doc.data();
+            let brewShade = brewData.shade;
+            let caption = brewData.name + " | " + brewData.brewery;
+            let filename = doc.id + ".png";
+            let dbImageRef = imagesRef.child(filename).getDownloadURL().then(function(url) {
+                renderFromStorage(brewShade, url, caption);
+            });
+        });
+    });
+}
 
 /* #endregion Form Related Functions */
