@@ -5,6 +5,8 @@ const addBrewDialog = document.getElementById('brews.add-brew-dialog');
 const addBrewForm = document.getElementById('add-brew-dialog.form');
 const addBrewCancelBtn = document.getElementById('add-brew-dialog.cancel-button');
 const addBrewAddBtn = document.getElementById('add-brew-dialog.add-button');
+const myBrewsDialog = document.getElementById('brews.my-brews-dialog');
+const myBrewsForm = document.getElementById('my-brews-dialog.form');
 const myBrewsCancelBtn = document.getElementById('my-brews-dialog.cancel-button');
 
 let file;
@@ -53,13 +55,11 @@ addBrewAddBtn.addEventListener('click', e => {
 });
 
 myBrewsCancelBtn.addEventListener('click', e => {
-    let dialog = document.getElementById('brews.my-brews-dialog');
-    dialog.removeAttribute('open');
+    resetMyBrewsForm();
 });
 
 /* #endregion Button Protocols */
 
-/* #region Form Related Functions */
 
 // Renders image in add brew dialog
 dialogUploadPreview = event => {
@@ -73,6 +73,7 @@ storeFile = event => {
     file = event.target.files[0];
 }
 
+// Resets add brew form when add or cancel button pressed
 function resetAddBrewForm() {
     addBrewForm.reset();
     document.getElementById('add-brew-dialog.brew-image-preview').src = "#";
@@ -80,6 +81,13 @@ function resetAddBrewForm() {
     addBrewBtn.removeAttribute('disabled');
 }
 
+function resetMyBrewsForm() {
+    myBrewsForm.reset();
+    document.getElementById('my-brews-dialog.brew-image-preview').src = '#';
+    myBrewsDialog.removeAttribute('open');
+}
+
+// Adds data to firestore for new brew
 function addBrewInfo(name, brewery, location, style, shade, description, image) {
     let key = name + ' - ' + brewery + ', ' + location;
     newFilename = key;
@@ -105,6 +113,7 @@ function addBrewInfo(name, brewery, location, style, shade, description, image) 
     });
 }
 
+// Adds brew from add brew dialog + renders link in page
 function addBrew(name, brewery, location, style, shade, image, description) {
 
     // Add text info doc to Brew Info collection
@@ -113,9 +122,13 @@ function addBrew(name, brewery, location, style, shade, image, description) {
     // Render in color category container
     let caption = name + ' - ' + brewery;
     renderAddedLink(shade, name, brewery, location);
-    //renderBrewImage(shade, image, caption);
+
+    // display from db
+    let button = document.getElementById('brews.' + name + ' - ' + brewery + ', ' + location);
+    displayDialogFromAdd(button, shade, name, brewery, location, style, description);
 }
 
+// Image to db
 function storeImage(image) {
     var filename = user.email + '/' + newFilename + '.png';
     var imageRef = storageRef.child(filename);
@@ -125,6 +138,20 @@ function storeImage(image) {
     });
 }
 
+// Simple CRUD operation - read
+function readDBDoc(name, brewery, location) {
+    let brew = brewCollect.doc(name + ' - ' + brewery + ', ' + location);
+    brew.get().then(function(doc) {
+        if (doc.exists) {
+            brew = doc.data();
+        } else {
+            console.log('Trying to read document for ' + brew + " but it doesn't exist.");
+            brew = null;
+        }
+    });
+}
+
+// Used to format shade to categorize
 function shadeSwitch(shade) {
     if (shade == "Light") {
         return 'light';
@@ -138,32 +165,14 @@ function shadeSwitch(shade) {
     return 'unlabeled';
 }
 
-function renderBrewImage(shade, image, caption) {
-    shade = shadeSwitch(shade); // call to format shade string
+/* #region Links and My Brew Dialog */
 
-    // element references
-    let container = document.getElementById('brews.' + shade + '-container');
-    let imgHTML = document.createElement('img');
-    let figureHTML = document.createElement('figure');
-    let figcaptionHTML = document.createElement('figcaption');
-
-    // set attributes of image structure
-    let src = URL.createObjectURL(image);
-    imgHTML.setAttribute('src', src);
-    imgHTML.setAttribute('style', 'max-height: 150px; max-width: 100px');
-    figureHTML.setAttribute('id', 'brews.' + shade + '-' + caption);
-    figcaptionHTML.innerText = caption;
-
-    // construct the element sub-dom
-    figureHTML.appendChild(imgHTML);
-    figureHTML.appendChild(figcaptionHTML);
-    container.appendChild(figureHTML);
-}
-
+// Adds link to list when using add brew dialog
 function renderAddedLink(shade, name, brewery, location) {
     // create the link in list elem form
     listElem = document.createElement('li');
     button = document.createElement('button');
+    button.setAttribute('id', 'brews.' + name + ' - ' + brewery + ', ' + location);
     button.setAttribute('style', 'border: none; color: blue; text-decoration: underline;');
     listElem.appendChild(button);
 
@@ -176,27 +185,7 @@ function renderAddedLink(shade, name, brewery, location) {
     list.appendChild(listElem);
 }
 
-function renderFromStorage(shade, image, caption) {
-    shade = shadeSwitch(shade); // call to format shade string
-
-    // element references
-    let container = document.getElementById('brews.' + shade + '-container');
-    let imgHTML = document.createElement('img');
-    let figureHTML = document.createElement('figure');
-    let figcaptionHTML = document.createElement('figcaption');
-
-    // set attributes of image structure
-    imgHTML.setAttribute('src', image);
-    imgHTML.setAttribute('style', 'max-height: 150px; max-width: 100px');
-    figureHTML.setAttribute('id', 'brews.' + shade + '-' + caption);
-    figcaptionHTML.innerText = caption;
-
-    // construct the element sub-dom
-    figureHTML.appendChild(imgHTML);
-    figureHTML.appendChild(figcaptionHTML);
-    container.appendChild(figureHTML);
-}
-
+// Loads links from storage
 function renderLinksFromStorage() {
     // hyperlink elements
     let listElem;
@@ -227,21 +216,7 @@ function renderLinksFromStorage() {
     });
 }
 
-function renderDBImages() {
-    var imagesRef = storageRef.child(userEmail);
-    brewCollect.get().then(function(querySnapshot) {
-        querySnapshot.forEach(function(doc) {
-            let brewData = doc.data();
-            let brewShade = brewData.shade;
-            let caption = brewData.name + " | " + brewData.brewery;
-            let filename = doc.id + ".png";
-            let dbImageRef = imagesRef.child(filename).getDownloadURL().then(function(url) {
-                renderFromStorage(brewShade, url, caption);
-            });
-        });
-    });
-}
-
+// Display my brew dialog - populate with db items
 function displayDialog(button, data) {
 
     button.addEventListener('click', e => {
@@ -275,4 +250,38 @@ function displayDialog(button, data) {
     });
 }
 
-/* #endregion Form Related Functions */
+// Display my brew dialog - populate with db items
+function displayDialogFromAdd(button, shade, name, brewery, location, style, description) {
+
+    button.addEventListener('click', e => {
+        // get all html elems to insert into
+        let imageInput = document.getElementById('my-brews-dialog.brew-image-preview');
+        let shadeInput = document.getElementById('my-brews-dialog.shade');
+        let nameInput = document.getElementById('my-brews-dialog.brew-name');
+        let breweryInput = document.getElementById('my-brews-dialog.brewery-name');
+        let locationInput = document.getElementById('my-brews-dialog.location');
+        let styleInput = document.getElementById('my-brews-dialog.brew-style');
+        let descriptionInput = document.getElementById('my-brews-dialog.brew-description');
+
+        // insert into them
+        shadeInput.value = shade;
+        nameInput.value = name;
+        breweryInput.value = brewery;
+        locationInput.value = location;
+        styleInput.value = style;
+        descriptionInput.value = description;
+
+        // image handler
+        var imagesRef = storageRef.child(userEmail);
+        let filename = name + ' - ' + brewery + ', ' + location + '.png';
+        let dbImageRef = imagesRef.child(filename).getDownloadURL().then(function(url) {
+            imageInput.setAttribute('src', url);
+        });
+
+        // open the dialog
+        let dialog = document.getElementById('brews.my-brews-dialog');
+        dialog.setAttribute('open', '');
+    });
+}
+
+/* #endregion Links and My Brew Dialog */
