@@ -24,15 +24,15 @@ auth.onAuthStateChanged(firebaseUser => {
         brewCollect = userDoc.collection('My Brews');
         isUser(userEmail);
         renderLinksFromStorage();
-        //renderDBImages();
+
     } else {
         window.location = 'login.html';
     }
 });
 
-
 /* #region Button Protocols */
 
+// open add dialog
 addBrewBtn.addEventListener('click', e => {
     addBrewDialog.setAttribute('open', '');
     addBrewBtn.setAttribute('disabled', '');
@@ -51,7 +51,7 @@ addBrewAddBtn.addEventListener('click', e => {
     let description = document.getElementById('add-brew-dialog.brew-description');
     let image = file;
     addBrew(name.value, brewery.value, location.value, style.value, shade.value, image, description.value);
-    resetAddBrewForm();
+    resetAddBrewForm(); 
 });
 
 myBrewsCancelBtn.addEventListener('click', e => {
@@ -60,10 +60,18 @@ myBrewsCancelBtn.addEventListener('click', e => {
 
 /* #endregion Button Protocols */
 
+/* #region Form Functions */
 
 // Renders image in add brew dialog
 dialogUploadPreview = event => {
     let preview = document.getElementById('add-brew-dialog.brew-image-preview');
+    preview.src = URL.createObjectURL(event.target.files[0]);
+    let image = event.target.files[0];
+};
+
+// Renders image in add brew dialog
+editDialogUploadPreview = event => {
+    let preview = document.getElementById('my-brews-dialog.brew-image-preview');
     preview.src = URL.createObjectURL(event.target.files[0]);
     let image = event.target.files[0];
 };
@@ -86,6 +94,10 @@ function resetMyBrewsForm() {
     document.getElementById('my-brews-dialog.brew-image-preview').src = '#';
     myBrewsDialog.removeAttribute('open');
 }
+
+/* #endregion Form Functions */
+
+/* #region Create Functions */
 
 // Adds data to firestore for new brew
 function addBrewInfo(name, brewery, location, style, shade, description, image) {
@@ -138,19 +150,6 @@ function storeImage(image) {
     });
 }
 
-// Simple CRUD operation - read
-function readDBDoc(name, brewery, location) {
-    let brew = brewCollect.doc(name + ' - ' + brewery + ', ' + location);
-    brew.get().then(function(doc) {
-        if (doc.exists) {
-            brew = doc.data();
-        } else {
-            console.log('Trying to read document for ' + brew + " but it doesn't exist.");
-            brew = null;
-        }
-    });
-}
-
 // Used to format shade to categorize
 function shadeSwitch(shade) {
     if (shade == "Light") {
@@ -165,13 +164,16 @@ function shadeSwitch(shade) {
     return 'unlabeled';
 }
 
-/* #region Links and My Brew Dialog */
+/* #endregion Create Functions */
+
+/* #region Read Functions */
 
 // Adds link to list when using add brew dialog
 function renderAddedLink(shade, name, brewery, location) {
     // create the link in list elem form
     listElem = document.createElement('li');
     button = document.createElement('button');
+    listElem.setAttribute('id', name + ' - ' + brewery + ', ' + location + '-list-link');
     button.setAttribute('id', 'brews.' + name + ' - ' + brewery + ', ' + location);
     button.setAttribute('style', 'border: none; color: blue; text-decoration: underline;');
     listElem.appendChild(button);
@@ -194,16 +196,21 @@ function renderLinksFromStorage() {
     // load entire collection
     brewCollect.get().then(function(querySnapshot) {
         querySnapshot.forEach(function(doc) {
+            // ref doc data
+            let data = doc.data();
+
             // create the link in list elem form
             listElem = document.createElement('li');
             button = document.createElement('button');
+            listElem.setAttribute('id', data.name + ' - ' + data.brewery + ', ' + data.location + '-list-link');
+            button.setAttribute('id', 'brews.' + data.name + ' - ' + data.brewery + ', ' + data.location);
             button.setAttribute('style', 'border: none; color: blue; text-decoration: underline; background-color: transparent');
             listElem.appendChild(button);
 
             // insert caption & get shade
-            let brewShade = doc.data().shade;
+            let brewShade = data.shade;
             brewShade = shadeSwitch(brewShade);
-            let brewCaption = doc.data().name + ", " + doc.data().brewery + ' - ' + doc.data().location;
+            let brewCaption = data.name + ", " + data.brewery + ' - ' + data.location;
             button.innerText = brewCaption;
 
             // insert into shade category
@@ -211,7 +218,7 @@ function renderLinksFromStorage() {
             list.appendChild(listElem);
 
             // button event listener
-            displayDialog(button, doc.data());
+            displayDialog(button, data);
         });
     });
 }
@@ -247,6 +254,9 @@ function displayDialog(button, data) {
         // open the dialog
         let dialog = document.getElementById('brews.my-brews-dialog');
         dialog.setAttribute('open', '');
+
+        editButtonFunctionality();
+        myBrewsDelete();
     });
 }
 
@@ -263,6 +273,13 @@ function displayDialogFromAdd(button, shade, name, brewery, location, style, des
         let styleInput = document.getElementById('my-brews-dialog.brew-style');
         let descriptionInput = document.getElementById('my-brews-dialog.brew-description');
 
+        // image handler
+        var imagesRef = storageRef.child(userEmail);
+        let filename = name + ' - ' + brewery + ', ' + location + '.png';
+        let dbImageRef = imagesRef.child(filename).getDownloadURL().then(function(url) {
+            imageInput.setAttribute('src', url);
+        });
+
         // insert into them
         shadeInput.value = shade;
         nameInput.value = name;
@@ -271,17 +288,94 @@ function displayDialogFromAdd(button, shade, name, brewery, location, style, des
         styleInput.value = style;
         descriptionInput.value = description;
 
-        // image handler
-        var imagesRef = storageRef.child(userEmail);
-        let filename = name + ' - ' + brewery + ', ' + location + '.png';
-        let dbImageRef = imagesRef.child(filename).getDownloadURL().then(function(url) {
-            imageInput.setAttribute('src', url);
-        });
-
         // open the dialog
         let dialog = document.getElementById('brews.my-brews-dialog');
         dialog.setAttribute('open', '');
     });
 }
 
-/* #endregion Links and My Brew Dialog */
+/* #endregion Read Functions */
+
+/* #region Update Functions */
+
+function enableEditing() {
+    var editBtn = document.getElementById('my-brews-dialog.edit-button');
+    editBtn.addEventListener('click', e => {
+        // element references
+        let imageInput = document.getElementById('my-brews-dialog.brew-image-input');
+        let imagePreview = document.getElementById('my-brews-dialog.brew-image-preview');
+        let shadeInput = document.getElementById('my-brews-dialog.shade');
+        let nameInput = document.getElementById('my-brews-dialog.brew-name');
+        let breweryInput = document.getElementById('my-brews-dialog.brewery-name');
+        let locationInput = document.getElementById('my-brews-dialog.location');
+        let styleInput = document.getElementById('my-brews-dialog.brew-style');
+        let descriptionInput = document.getElementById('my-brews-dialog.brew-description');
+
+        imageInput.removeAttribute('hidden');
+        imageInput.removeAttribute('disabled');
+        imagePreview.removeAttribute('disabled');
+        shadeInput.removeAttribute('disabled');
+        nameInput.removeAttribute('disabled');
+        breweryInput.removeAttribute('disabled');
+        locationInput.removeAttribute('disabled');
+        styleInput.removeAttribute('disabled');
+        descriptionInput.removeAttribute('disabled');
+        editBtn.innerText = 'Update';
+    });
+}
+
+function editButtonFunctionality() {
+    enableEditing();
+}
+
+function updateButtonFunctionality() {
+    let updateBtn = document.getElementById('my-brews-dialog.edit-button');
+}
+
+function editBrew(name, brewery, location) {
+    // Reference and get data
+    var docName = name + ' - ' + brewery + ', ' + location;
+
+    // Remove disabled attribute from inputs
+
+
+    // Change edit btn to save button
+}
+
+/* #endregion Update Functions */
+
+/* #region Delete Functions */
+
+// delete btn event listening attachment
+function myBrewsDelete() {
+    const myBrewsDeleteBtn = document.getElementById('my-brews-dialog.delete-button');
+    myBrewsDeleteBtn.addEventListener('click', e => {
+        let name = document.getElementById('my-brews-dialog.brew-name').value;
+        let brewery = document.getElementById('my-brews-dialog.brewery-name').value;
+        let location = document.getElementById('my-brews-dialog.location').value;
+        deleteBrew(name, brewery, location);
+        resetMyBrewsForm();
+    });
+}
+
+// database and link deletion function
+function deleteBrew(name, brewery, location) {
+    var imageName = name + ' - ' + brewery + ', ' + location + '.png';
+    var imageRef = storageRef.child(userEmail).child(imageName);
+    var listElem = document.getElementById(name + ' - ' + brewery + ', ' + location + '-list-link');
+    listElem.remove();
+
+
+    imageRef.delete().then(function() {
+        let key = name + ' - ' + brewery + ', ' + location;
+        let docRef = brewCollect.doc(key).delete().then(function() {
+            console.log(imageName + " deleted from storage and firestore");
+        }).catch(function(error) {
+            console.error("Error removing document: ", error);
+        });
+    }).catch(function(error) {
+        console.error("Error removing image: ", error);
+    });
+}
+
+/* #endregion Delete Functions */

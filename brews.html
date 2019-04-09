@@ -72,14 +72,15 @@
                     <dialog id="brews.my-brews-dialog">
                         <form id="my-brews-dialog.form">
                             <div id="my-brews-dialog.header">
-                                Header
+                                Header - change in HTML file using JS
                             </div>
+                            <input id="my-brews-dialog.brew-image-input" type="file" accept="image/*" onchange="storeFile(event); editDialogUploadPreview(event)" hidden disabled><br>
                             <img id="my-brews-dialog.brew-image-preview" style="max-height: 300px; max-width: 200" class="previews"><br>
                             <input id="my-brews-dialog.brew-name" class="display read-only" disabled></input><br>
                             <input id="my-brews-dialog.brewery-name" class="display read-only" disabled></input><br>
                             <input id="my-brews-dialog.location" class="display read-only" disabled></input><br>
                             <select id="my-brews-dialog.shade" class="display read-only" disabled>
-                                <option style="display: none" value="This beer is..." selected disabled>This beer is...</option>
+                                <option style="display: none" value="This beer  is..." selected disabled>This beer is...</option>
                                 <optgroup label="Shade of Beer">
                                     <option id="add-brew-dialog.light-brew">Light</option>
                                     <option id="add-brew-dialog.fair-brew">Fair</option>
@@ -90,6 +91,8 @@
                             <textarea id="my-brews-dialog.brew-description" class="display read-only" disabled></textarea><br>
                         </form>
                         <button id="my-brews-dialog.cancel-button" type="reset">Close</button>
+                        <button id="my-brews-dialog.edit-button">Edit</button>
+                        <button id="my-brews-dialog.delete-button">Delete</button>
                     </dialog>
                 </div>
                 <div id="brews.light-container" class="containers list-containers light-beers">
