@@ -55,6 +55,7 @@ addBrewAddBtn.addEventListener('click', e => {
 });
 
 myBrewsCancelBtn.addEventListener('click', e => {
+    disableEditing();
     resetMyBrewsForm();
 });
 
@@ -298,7 +299,7 @@ function displayDialogFromAdd(button, shade, name, brewery, location, style, des
 
 /* #region Update Functions */
 
-function enableEditing() {
+function editButtonFunctionality() {
     var editBtn = document.getElementById('my-brews-dialog.edit-button');
     editBtn.addEventListener('click', e => {
         // element references
@@ -321,25 +322,55 @@ function enableEditing() {
         styleInput.removeAttribute('disabled');
         descriptionInput.removeAttribute('disabled');
         editBtn.innerText = 'Update';
+        updateButtonFunctionality(nameInput.value, breweryInput.value, locationInput.value);
     });
 }
 
-function editButtonFunctionality() {
-    enableEditing();
+function disableEditing() {
+    // element references
+    var editBtn = document.getElementById('my-brews-dialog.edit-button');
+    let imageInput = document.getElementById('my-brews-dialog.brew-image-input');
+    let imagePreview = document.getElementById('my-brews-dialog.brew-image-preview');
+    let shadeInput = document.getElementById('my-brews-dialog.shade');
+    let nameInput = document.getElementById('my-brews-dialog.brew-name');
+    let breweryInput = document.getElementById('my-brews-dialog.brewery-name');
+    let locationInput = document.getElementById('my-brews-dialog.location');
+    let styleInput = document.getElementById('my-brews-dialog.brew-style');
+    let descriptionInput = document.getElementById('my-brews-dialog.brew-description');
+
+    imageInput.setAttribute('hidden', '');
+    imageInput.setAttribute('disabled', '');
+    imagePreview.setAttribute('disabled', '');
+    shadeInput.setAttribute('disabled', '');
+    nameInput.setAttribute('disabled', '');
+    breweryInput.setAttribute('disabled', '');
+    locationInput.setAttribute('disabled', '');
+    styleInput.setAttribute('disabled', '');
+    descriptionInput.setAttribute('disabled', '');
+    editBtn.innerText = 'Edit';
 }
 
-function updateButtonFunctionality() {
+function updateButtonFunctionality(name, brewery, location) {
     let updateBtn = document.getElementById('my-brews-dialog.edit-button');
+    updateBtn.addEventListener('click', e => {
+        update(name, brewery, location);
+        disableEditing();
+        storeFile();
+    });
 }
 
-function editBrew(name, brewery, location) {
+function update(name, brewery, location) {
     // Reference and get data
-    var docName = name + ' - ' + brewery + ', ' + location;
-
-    // Remove disabled attribute from inputs
-
-
-    // Change edit btn to save button
+    let imagePreview = document.getElementById('my-brews-dialog.brew-image-preview');
+    let shadeInput = document.getElementById('my-brews-dialog.shade');
+    let nameInput = document.getElementById('my-brews-dialog.brew-name');
+    let breweryInput = document.getElementById('my-brews-dialog.brewery-name');
+    let locationInput = document.getElementById('my-brews-dialog.location');
+    let styleInput = document.getElementById('my-brews-dialog.brew-style');
+    let descriptionInput = document.getElementById('my-brews-dialog.brew-description');
+    
+    deleteBrew(name, brewery, location);
+    addBrew(nameInput.value, breweryInput.value, locationInput.value, styleInput.value, shadeInput.value, file, descriptionInput.value);
 }
 
 /* #endregion Update Functions */
