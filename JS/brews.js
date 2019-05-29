@@ -75,6 +75,7 @@ editDialogUploadPreview = event => {
     let preview = document.getElementById('my-brews-dialog.brew-image-preview');
     preview.src = URL.createObjectURL(event.target.files[0]);
     let image = event.target.files[0];
+    file = event.target.files[0];
 };
 
 // Retrieve from HTML input
@@ -355,7 +356,6 @@ function updateButtonFunctionality(name, brewery, location) {
     updateBtn.addEventListener('click', e => {
         update(name, brewery, location);
         disableEditing();
-        storeFile();
     });
 }
 
@@ -369,8 +369,22 @@ function update(name, brewery, location) {
     let styleInput = document.getElementById('my-brews-dialog.brew-style');
     let descriptionInput = document.getElementById('my-brews-dialog.brew-description');
     
-    deleteBrew(name, brewery, location);
-    addBrew(nameInput.value, breweryInput.value, locationInput.value, styleInput.value, shadeInput.value, file, descriptionInput.value);
+    newFilename = nameInput.value + ' - ' + breweryInput.value + ', ' + locationInput.value;
+    var imageRef = storageRef.child(userEmail).child(newFilename);
+    var d = brewCollect.doc(name + ' - ' + brewery + ', ' + location);
+    var updated = brewCollect.doc(nameInput.value + ' - ' + breweryInput.value + ', ' + locationInput.value)
+    updated.set({
+        "brewery": breweryInput.value,
+        "description": descriptionInput.value,
+        "location": locationInput.value,
+        "name": nameInput.value,
+        "shade": shadeInput.value,
+        "style": styleInput.value
+    }).then(function() {
+        storeImage(file);
+        deleteBrew(name, brewery, location);
+        console.log(name + ' - ' + brewery + ', ' + location + " document successfully updated");
+    });
 }
 
 /* #endregion Update Functions */
