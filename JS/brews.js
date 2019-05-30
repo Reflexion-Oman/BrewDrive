@@ -11,6 +11,7 @@ const myBrewsCancelBtn = document.getElementById('my-brews-dialog.cancel-button'
 
 let file;
 let newFilename;
+let myBrewCount = 0;
 
 // Authorization State Handler
 auth.onAuthStateChanged(firebaseUser => {
@@ -388,6 +389,18 @@ function update(name, brewery, location) {
     });
 }
 
+// Decrement brewCount in db
+function decrementCount() {
+    userDoc.get().then(function(doc) {
+        let data = doc.data();
+        let updated = data.myBrewCount - 1;
+        userDoc.update({
+            myBrewCount: updated
+        });
+    });
+       
+}
+
 /* #endregion Update Functions */
 
 /* #region Delete Functions */
@@ -410,6 +423,7 @@ function deleteBrew(name, brewery, location) {
     var imageRef = storageRef.child(userEmail).child(imageName);
     var listElem = document.getElementById(name + ' - ' + brewery + ', ' + location + '-list-link');
     listElem.remove();
+    decrementCount();
 
 
     imageRef.delete().then(function() {
