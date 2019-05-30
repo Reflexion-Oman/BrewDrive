@@ -383,6 +383,7 @@ function update(name, brewery, location) {
     }).then(function() {
         storeImage(file);
         deleteBrew(name, brewery, location);
+        renderAddedLink(shadeInput.value, nameInput.value, breweryInput.value, locationInput.value);
         console.log(name + ' - ' + brewery + ', ' + location + " document successfully updated");
     });
 }
