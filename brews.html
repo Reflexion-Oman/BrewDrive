@@ -46,8 +46,8 @@
                             <input id="add-brew-dialog.brew-name-input" placeholder="Name of Beer" required><br>
                             <input id="add-brew-dialog.brewery-name-input" placeholder="Brewery Name" required><br>
                             <input id="add-brew-dialog.brewery-location-input" placeholder="Brewery Location" required><br>
-                            <input id="add-brew-dialog.brew-style" placeholder="Beer Style"><br>
-                            <select id="add-brew-dialog.brew-color" required>
+                            <input id="add-brew-dialog.brew-style" placeholder="Beer Style" required><br>
+                            <select id="add-brew-dialog.brew-color">
                                 <option style="display: none" value="This beer is..." selected disabled>This beer is...</option>
                                 <optgroup label="Shade of Beer">
                                     <option id="add-brew-dialog.light-brew">Light</option>
@@ -57,10 +57,10 @@
                             </select><br>
                             <input id="add-brew-dialog.brew-image" type="file" accept="image/*" onchange="storeFile(event); dialogUploadPreview(event)" required><br>
                             <img id="add-brew-dialog.brew-image-preview" alt="Image Preview"><br>
-                            <textarea id="add-brew-dialog.brew-description" placeholder="Describe this beer..."></textarea><br>                                                                    
+                            <textarea id="add-brew-dialog.brew-description" placeholder="Describe this beer..."></textarea><br>
                         </form>
                         <button id="add-brew-dialog.cancel-button" type="reset">Cancel</button>
-                        <button id="add-brew-dialog.add-button">Add</button>               
+                        <button id="add-brew-dialog.add-button">Add</button>                                                                        
                     </div>
                 </dialog>
             </div>

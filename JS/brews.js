@@ -44,6 +44,7 @@ addBrewCancelBtn.addEventListener('click', e => {
 });
 
 addBrewAddBtn.addEventListener('click', e => {
+
     let name = document.getElementById('add-brew-dialog.brew-name-input');
     let brewery = document.getElementById('add-brew-dialog.brewery-name-input');
     let location = document.getElementById('add-brew-dialog.brewery-location-input');
@@ -51,8 +52,14 @@ addBrewAddBtn.addEventListener('click', e => {
     let shade = document.getElementById('add-brew-dialog.brew-color');
     let description = document.getElementById('add-brew-dialog.brew-description');
     let image = file;
-    addBrew(name.value, brewery.value, location.value, style.value, shade.value, image, description.value);
-    resetAddBrewForm(); 
+    if (name.value && brewery.value && location.value && style.value && image) {
+        addBrew(name.value, brewery.value, location.value, style.value, shade.value, image, description.value);
+        resetAddBrewForm(); 
+    }
+    else {
+        window.alert('fill in all required fields');
+    }
+    
 });
 
 myBrewsCancelBtn.addEventListener('click', e => {
@@ -133,7 +140,7 @@ function addBrew(name, brewery, location, style, shade, image, description) {
 
     // Add text info doc to Brew Info collection
     addBrewInfo(name, brewery, location, style, shade, description, image);
-                
+
     // Render in color category container
     let caption = name + ' - ' + brewery;
     renderAddedLink(shade, name, brewery, location);
