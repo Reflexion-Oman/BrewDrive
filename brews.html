@@ -43,74 +43,74 @@
                     </div>
                     <div id="add-brew-dialog.logistic-input">
                         <form id="add-brew-dialog.form" >
-                            <input id="add-brew-dialog.brew-name-input" placeholder="Name of Beer" required><br>
-                            <input id="add-brew-dialog.brewery-name-input" placeholder="Brewery Name" required><br>
-                            <input id="add-brew-dialog.brewery-location-input" placeholder="Brewery Location" required><br>
-                            <input id="add-brew-dialog.brew-style" placeholder="Beer Style"><br>
-                            <select id="add-brew-dialog.brew-color" required>
+                            <input placeholder="Name of Beer" required><br>
+                            <input placeholder="Brewery Name" required><br>
+                            <input placeholder="Brewery Location" required><br>
+                            <input placeholder="Beer Style" required><br>
+                            <select>
                                 <option style="display: none" value="This beer is..." selected disabled>This beer is...</option>
                                 <optgroup label="Shade of Beer">
-                                    <option id="add-brew-dialog.light-brew">Light</option>
-                                    <option id="add-brew-dialog.fair-brew">Fair</option>
-                                    <option id="add-brew-dialog.heavy-brew">Heavy</option>
+                                    <option>Light</option>
+                                    <option>Fair</option>
+                                    <option>Heavy</option>
                                 </optgroup>
                             </select><br>
-                            <input id="add-brew-dialog.brew-image" type="file" accept="image/*" onchange="storeFile(event); dialogUploadPreview(event)" required><br>
-                            <img id="add-brew-dialog.brew-image-preview" alt="Image Preview"><br>
-                            <textarea id="add-brew-dialog.brew-description" placeholder="Describe this beer..."></textarea><br>                                                                    
+                            <input type="file" accept="image/*" onchange="storeFile(event); dialogUploadPreview(event)" required><br>
+                            <img alt="Image Preview"><br>
+                            <textarea placeholder="Describe this beer..."></textarea><br>
                         </form>
-                        <button id="add-brew-dialog.cancel-button" type="reset">Cancel</button>
-                        <button id="add-brew-dialog.add-button">Add</button>               
+                        <button type="reset">Cancel</button>
+                        <button>Add</button>                                                                        
                     </div>
                 </dialog>
             </div>
 
             <h2></h2>
             <!-- Container for Color Categories -->
-            <div id="brews.my-brews-container">
-                <div id="brews.my-brews-dialog-container">
-                    <dialog id="brews.my-brews-dialog">
-                        <form id="my-brews-dialog.form">
-                            <div id="my-brews-dialog.header">
+            <div>
+                <div>
+                    <dialog>
+                        <form>
+                            <div>
                                 Header - change in HTML file using JS
                             </div>
-                            <input id="my-brews-dialog.brew-image-input" type="file" accept="image/*" onchange="editDialogUploadPreview(event)" hidden disabled><br>
-                            <img id="my-brews-dialog.brew-image-preview" style="max-height: 300px; max-width: 200" class="previews"><br>
-                            <input id="my-brews-dialog.brew-name" class="display read-only" disabled></input><br>
-                            <input id="my-brews-dialog.brewery-name" class="display read-only" disabled></input><br>
-                            <input id="my-brews-dialog.location" class="display read-only" disabled></input><br>
-                            <select id="my-brews-dialog.shade" class="display read-only" disabled>
+                            <input type="file" accept="image/*" onchange="editDialogUploadPreview(event)" hidden disabled><br>
+                            <img style="max-height: 300px; max-width: 200" class="previews"><br>
+                            <input class="display read-only" disabled></input><br>
+                            <input class="display read-only" disabled></input><br>
+                            <input class="display read-only" disabled></input><br>
+                            <select class="display read-only" disabled>
                                 <option style="display: none" value="This beer  is..." selected disabled>This beer is...</option>
                                 <optgroup label="Shade of Beer">
-                                    <option id="add-brew-dialog.light-brew">Light</option>
-                                    <option id="add-brew-dialog.fair-brew">Fair</option>
-                                    <option id="add-brew-dialog.heavy-brew">Heavy</option>
+                                    <option>Light</option>
+                                    <option>Fair</option>
+                                    <option>Heavy</option>
                                 </optgroup>
                             </select><br>
-                            <input id="my-brews-dialog.brew-style" class="display read-only" disabled></input><br>
-                            <textarea id="my-brews-dialog.brew-description" class="display read-only" disabled></textarea><br>
+                            <input class="display read-only" disabled></input><br>
+                            <textarea class="display read-only" disabled></textarea><br>
                         </form>
-                        <button id="my-brews-dialog.cancel-button" type="reset">Close</button>
-                        <button id="my-brews-dialog.edit-button">Edit</button>
-                        <button id="my-brews-dialog.delete-button">Delete</button>
+                        <button type="reset">Close</button>
+                        <button>Edit</button>
+                        <button>Delete</button>
                     </dialog>
                 </div>
-                <div id="brews.light-container" class="containers list-containers light-beers">
+                <div class="containers list-containers light-beers">
                     <h3>Lights</h3>
-                    <ul id="brews.light-list" class="lists light-beer-lists"></ul>
+                    <ul class="lists light-beer-lists"></ul>
                 </div>
-                <div id="brews.fair-container" class="containers list-containers fair-beers">
+                <div class="containers list-containers fair-beers">
                     <h3>Fairs</h3>
-                    <ul id="brews.fair-list" class="lists fair-beer-lists"></ul>
+                    <ul class="lists fair-beer-lists"></ul>
 
                 </div>
-                <div id="brews.heavy-container" class="containers list-containers heavy-beers">
+                <div class="containers list-containers heavy-beers">
                     <h3>Heavies</h3>
-                    <ul id="brews.heavy-list" class="lists heavy-beer-lists"></ul>
+                    <ul class="lists heavy-beer-lists"></ul>
                 </div>
-                <div id="brews.unlabeled-container" class="containers list-containers unlabeled-beers">
+                <div class="containers list-containers unlabeled-beers">
                     <h3>Others</h3>
-                    <ul id="brews.unlabeled-list" class="lists unlabeled-beer-lists"></ul>
+                    <ul class="lists unlabeled-beer-lists"></ul>
                 </div>
             </div>
         </main>

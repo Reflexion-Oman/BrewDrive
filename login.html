@@ -4,7 +4,6 @@
         <title>BrewDrive</title>
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="author" content="AK">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="https://www.gstatic.com/firebasejs/5.8.2/firebase-app.js"></script>
         <script src="https://www.gstatic.com/firebasejs/5.8.2/firebase-auth.js"></script>
@@ -31,19 +30,19 @@
             <p>
                 Blah blah... Blah
             </p>
-            <div id="login.auth">
+            <div id="login-form">
                 <h3>Log In</h3>
-                <input type="text" id="login.email" placeholder="Email" autocomplete="off"><br>
-                <input type="text" id="login.username" placeholder="Username" autocomplete="off"><br>
-                <input type="password" id="login.password" placeholder="Password"><br>
-                <br>
-                <button type="submit" id="login.log-in-button">Log In</button>
-                <button type="button" id="login.sign-up-button">Sign Up</button>
+                <input type="text" class="login-inputs email" placeholder="Email" autocomplete="off">
+                <input type="password" class="login-inputs password" placeholder="Password">
+                <button type="submit" class="login-buttons exists">Log In</button>
+                <button type="button" class="login-buttons new-users">Sign Up</button>
             </div>
         </main>
 
         <!-- #region Site Scripts -->
-        <script src="JS/login.js"></script>
+        <script src="JS/Login.js"></script>
+        <script src="JS/AuthObject.js"></script>
+        <script src="JS/App.js"></script>
         <noscript>Oops! Maybe JavaScript isn't enabled!</noscript>
         <!-- #endregion -->
     </body>
