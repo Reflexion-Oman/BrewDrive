@@ -1,41 +1,90 @@
-/* #region Firestore Elements */
-const firestore = firebase.firestore();
-const settings = {/* your settings... */};
-firestore.settings(settings);
-const auth = firebase.auth();
-/* #endregion Firestore Elements */
+class Login {
+    constructor() {
+        this.firestore = firebase.firestore();
+        this.auth = firebase.auth();
+        this.elements = {
+            EMAIL: '#login-form .email',
+            PASSWORD: '#login-form .password',
+            LOGIN: '#login-form .exists',
+            SIGNUP: '#login-form .new-users'
+        }
+    }
 
-/* #region Log In and Sign Up */
+    // Firebase auth getter
+    instance() {
+        return this.auth;
+    }
 
-// Element instantiation
-const emailHTML = document.getElementById('login.email');
-const usernameHTML = document.getElementById('login.username');
-const passwordHTML = document.getElementById('login.password');
-const loginBtn = document.getElementById('login.log-in-button');
-const signupBtn = document.getElementById('login.sign-up-button');
+    // Enumerator for page element objects
+    element(enumeration) {
+        let element;
+        switch (enumeration) {
+            case 'EMAIL':
+                element = document.querySelector(this.elements.EMAIL);
+                break;
+            case 'PASSWORD':
+                element = document.querySelector(this.elements.PASSWORD);
+                break;
+            case 'LOGIN':
+                element = document.querySelector(this.elements.LOGIN);
+                break;
+            case 'SIGNUP':
+                element = document.querySelector(this.elements.SIGNUP);
+                break;
+            default:
+                console.log('Invalid enumeration passed to login');
+                return;
+        }
+        return element;
+    }
 
-// Log In Event Protocol
-loginBtn.addEventListener('click', e => {
-    let email = emailHTML.value;
-    let username = usernameHTML.value;
-    let password = passwordHTML.value;
-    const promise = auth.signInWithEmailAndPassword(email, password);
-    promise.catch(e => console.log(e.message));
-});
+    // What to do when login button is clicked
+    loginListener() {
+        // Fetch the input values.
+        let email = this.element('EMAIL').value;
+        let password = this.element('PASSWORD').value;
 
-// Sign Up Event Protocol
-signupBtn.addEventListener('click', e => {
-    let email = emailHTML.value;
-    let username = usernameHTML.value;
-    let password = passwordHTML.value;
-    const promise = auth.createUserWithEmailAndPassword(email, password);
-    promise.catch(e => console.log(e.message));
-});
+        // Firebase auth calls using input values
+        const promise = this.auth.signInWithEmailAndPassword(email, password);
+        promise.catch(e => console.log(e.message));
+    }
+
+    // What to do when signup button is clicked
+    signupListener() {
+        // Fetch input values
+        let email = this.element('EMAIL').value;
+        let password = this.element('PASSWORD').value;
+
+        // Firebase auth calls using input values
+        const promise = this.auth.createUserWithEmailAndPassword(email, password);
+        promise.catch(e => console.log(e.message));
+    }
+
+    // Adds event listeners to buttons
+    activateButtons() {
+        // Fetch the button elements.
+        let loginBtn = this.element('LOGIN');
+        let signupBtn = this.element('SIGNUP');
+
+        // Add the event listeners.
+        loginBtn.addEventListener('click', e => {
+            this.loginListener();
+        });
+
+        signupBtn.addEventListener('click', e => {
+            this.signupListener();
+        });
+    }
+}
+
+let login = new Login();
+login.activateButtons();
 
 // Authorization State Handler
-auth.onAuthStateChanged(firebaseUser => {
+login.instance().onAuthStateChanged(firebaseUser => {
     if (firebaseUser) {
         window.location = "index.html";
+        
     } else {
         console.log('Not logged in');
     }
