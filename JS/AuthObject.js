@@ -9,11 +9,18 @@ class AuthObject {
         this.userDoc = this.userCollect.doc('user-' + user.email);
     }
 
+    set user(user) {
+        this._user = user;
+    }
+
     get user() {
-        return this.user;
+        return this._user;
     }
 
     static addUser(email) {
+        let userCollect = firebase.firestore().collection('Users');
+        let userDoc =  userCollect.doc('user-' + email);
+
         userDoc.set({
             user: {
                 email: email
@@ -21,12 +28,15 @@ class AuthObject {
         });
     }
 
-    static isUser(email) {
-        this.userDoc.get().then(function (doc) {
+    isUser(email) {
+        let userCollect = this.firestore.collection('Users');
+        let userDoc =  userCollect.doc('user-' + this.user.email);
+        
+        userDoc.get().then(function (doc) {
             if (doc && doc.exists) {
-                console.log(this.userEmail + ' exists as a user');
+                console.log(email + ' exists as a user');
             } else {
-                addUser(email);
+                AuthObject.addUser(email);
             }
         });
     }

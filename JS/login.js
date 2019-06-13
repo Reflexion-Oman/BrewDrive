@@ -84,9 +84,6 @@ login.activateButtons();
 login.instance().onAuthStateChanged(firebaseUser => {
     if (firebaseUser) {
         window.location = "index.html";
-        
-    } else {
-        console.log('Not logged in');
     }
 });
 
